@@ -1,0 +1,37 @@
+# Park Equity Modeling
+# File: ParkEquityRunCode.run
+# Purpose: To run all code (data import, model solution generation, and solution export)
+# Anisa Young, Emily Tucker, Mariela Fernandez, Robert Brookover, Brandon Harris, David White
+
+# RESET
+reset;
+display "Begin Code Process"; # notifies the user that the code is now running
+
+# CALL .MOD FILE
+model ParkEquityModelFormulation.mod; # input the model formulation
+display "Model Load Complete"; # notifies the user that the model has been successfully read
+
+# UPLOAD DATA (from Excel)
+commands ParkEquityImportInputs.run; # data input (sets and parameters) from Excel to AMPL
+display "Data Load Complete"; # notifies the user that the input data has been successfully read
+
+# DEFINE SOLVER
+option solver gurobi_ampl;
+
+# SOLVE
+#option gurobi_options 'mipgap = 0.75 outlev = 1'; # use this option if it is acceptable to have a optimality gap
+#                                 OR
+option gurobi_options 'outlev = 1'; # use this option if solving to optimality
+
+solve; # solve for a solution
+
+# OUTPUT SOLVING COMPLETION
+
+# Displays the number of assignments.
+display AssignNum; # If the model runs correctly, the number of assignments equals the number of resident locations.
+
+display "Solving Complete"; # notifies the user that a solution has been successfully found
+
+# EXPORT DATA (to Excel)
+commands ParkEquityExportSolutions.run; # export solutions from AMPL to Excel
+display "Full Export Complete"; # notifies the user that the data export is complete

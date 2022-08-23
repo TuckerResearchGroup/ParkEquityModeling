@@ -1,0 +1,118 @@
+# Park Equity Modeling
+# File: ParkEquityExportSolutions.run
+# Purpose: To export solutions from AMPL into Excel
+# Anisa Young, Emily Tucker, Mariela Fernandez, Robert Brookover, Brandon Harris, David White
+
+# File Name
+param DataFileExport symbolic := "ParkEquitySolutionRecord.xlsx";
+
+# PREPARING TABLES
+
+# Main Decision Variables
+
+# Export decision variable y[k] --> 0/1 if do not select park k in K/do select park k in K
+table ParkSelection OUT "tableproxy" "odbc" (DataFileExport):
+K -> [Park], y;
+
+# Export decision variable x[k,l] --> 0/1 park k in K is primary park of location l in L
+table PrimaryPark OUT "tableproxy" "odbc" (DataFileExport): # table distances to park from resident location using pedestrian and bicycle paths
+{k in K} -> [ParkLocation], {l in L} <x[k,l] ~ (l)>;
+
+# Slack Decision Variables
+
+# Export distance deviation to a primary park for each location (decision variable d+[l])
+table DistanceSlack OUT "tableproxy" "odbc" (DataFileExport):
+L -> [Location], DistPlus;
+
+# Export capacity deviation of a primary park k (decision variable a+[k])
+table CapacitySlack OUT "tableproxy" "odbc" (DataFileExport):
+K -> [Park], CapPlus;
+
+# Export Capacity Variable --> Linearized amount of capacity deviation in a park k in for a location l in L (decision variable pi^cap+[k,l]
+table LinearizedCapTable OUT "tableproxy" "odbc" (DataFileExport):
+{k in K} -> [ParkLocation], {l in L} <LinCapPlusKL[k,l] ~ (l)>;
+
+# Intermediate Decision Variables - DEVIATION DECISION VARAIBLES
+
+# Export weighted deviations of distance, capacity, heat, and tree cover per demographic classification
+table DemographicDeviations OUT "tableproxy" "odbc" (DataFileExport):
+R -> [Demographic], DistDeviationR, CapDeviationR, HeatPDeviationR, HeatMDeviationR,
+TreePDeviationR, TreeMDeviationR, AllDeviationsR;
+
+# Other Results
+
+# Export total cost to purchase new park site land
+table ParkCost OUT "tableproxy" "odbc" (DataFileExport):
+[], TotalParkFee;
+
+# Model inputs to record in Excel output spreadsheet
+
+# Export the deviation classification priority weights --> (w)
+table DevTypeWeightInputs OUT "tableproxy" "odbc" (DataFileExport):
+[], DistWeight, CapWeight, HeatPlusWeight, HeatMinusWeight, TreePlusWeight, TreeMinusWeight;
+
+# Export the heat acceptable range
+table HeatRangeInput OUT "tableproxy" "odbc" (DataFileExport):
+[], MaxHeat, MinHeat;
+
+# Export the tree cover acceptable range
+table TreeRangeInput OUT "tableproxy" "odbc" (DataFileExport):
+[], MaxTree, MinTree;
+
+# Export the monetary budget --> (b)
+table BudgetInput OUT "tableproxy" "odbc" (DataFileExport):
+[], Budget;
+
+# Export the maximum allowable distance from primary parks to locations --> (m)
+table MaxAllowDistInput OUT "tableproxy" "odbc" (DataFileExport):
+[], MaxAllowDist;
+
+# Export demographic classification strategic target weight --> (q[r])
+table DemTypeWeightInput OUT "tableproxy" "odbc" (DataFileExport):
+R -> [Demographic], DemWeight;
+
+# Export the BigM value for capacity deviations
+table CapBigMInput OUT "tableproxy" "odbc" (DataFileExport):
+[], CapDevBigM;
+
+# Export the BigM value for actual park capacity value
+table MaxCapValue OUT "tableproxy" "odbc" (DataFileExport):
+[], ActCapBigM;
+
+# Export the BigM value for actual resident-park distance value
+table MaxDistValue OUT "tableproxy" "odbc" (DataFileExport):
+[], ActDistBigM;
+
+# WRITE TABLES
+write table ParkSelection;
+display "1/16 Export Complete";
+write table PrimaryPark;
+display "2/16 Export Complete";
+write table DistanceSlack;
+display "3/16 Export Complete";
+write table CapacitySlack;
+display "4/16 Export Complete";
+write table LinearizedCapTable;
+display "5/16 Export Complete";
+write table DemographicDeviations;
+display "6/16 Export Complete";
+write table ParkCost;
+display "7/16 Export Complete";
+write table DevTypeWeightInputs;
+display "8/16 Export Complete";
+write table HeatRangeInput;
+display "9/16 Export Complete";
+write table TreeRangeInput;
+display "10/16 Export Complete";
+write table BudgetInput;
+display "11/16 Export Complete";
+write table MaxAllowDistInput;
+display "12/16 Export Complete";
+write table DemTypeWeightInput;
+display "13/16 Export Complete";
+write table CapBigMInput;
+display "14/16 Export Complete";
+write table MaxCapValue;
+display "15/16 Export Complete";
+write table MaxDistValue;
+display "16/16 Export Complete";

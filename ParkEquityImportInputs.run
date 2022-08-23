@@ -1,0 +1,104 @@
+# Park Equity Modeling
+# File: ParkEquityImportInputs.run
+# Purpose: To import data inputs from Excel into AMPL
+# Anisa Young, Emily Tucker, Mariela Fernandez, Robert Brookover, Brandon Harris, David White
+
+# File Name
+# Save the Excel input file as a parameter in AMPL.
+param DataFileInput symbolic := "ParkEquityInputData.xlsb";
+
+# PREPARING TABLES
+
+# Sets
+
+# Import the parks set
+table tabSetParks IN "tableproxy" "odbc" (DataFileInput) "SetParks": K <- [SetOfParks]; # table of set of parks
+
+# Import the locations set
+table tabSetLocations IN "tableproxy" "odbc" (DataFileInput) "SetLocations": L <- [SetOfLocations]; # table of set of resident locations
+
+# Import the demographics set
+table tabSetDemographic IN "tableproxy" "odbc" (DataFileInput) "SetDemographic": R <- [SetOfDemographics]; # table of set of demographic categories
+
+# Parameters
+
+# Import distance parameters
+table tabDistanceParams "tableproxy" "odbc" (DataFileInput) "DistParams": [],
+DistNorm, # normalization of distance
+DistWeight, # the weight of importance/priority of distance goodness
+ActDistBigM; # the largest value that actual distance from location to primary park would have
+
+# Import capacity parameters
+table tabCapacityParams "tableproxy" "odbc" (DataFileInput) "CapParams": [],
+CapDevBigM, # the largest value that a capacity deviation would have
+CapNorm, # normalization of capacity
+CapWeight, # the weight of importance/priority of capacity goodness
+ActCapBigM; # the largest value that actual capacity of a primary park would have
+
+# Import heat parameters
+table tabHeatParams "tableproxy" "odbc" (DataFileInput) "HeatParams": [],
+HeatNorm, # normalization of heat
+HeatPlusWeight, # the weight of importance/priority of not having excess heat deviations
+HeatMinusWeight, # the weight of importance/priority of not having deficit heat deviations
+MaxHeat, # the maximum acceptable park heat
+MinHeat;  # the minimum acceptable park heat
+
+# Import tree cover parameters
+table tabTreeParams "tableproxy" "odbc" (DataFileInput) "TreeParams": [],
+TreeNorm, # normalization of tree cover
+TreePlusWeight, # the weight of importance/priority of not having excess tree cover deviations
+TreeMinusWeight, # the weight of importance/priority of not having deficit tree cover deviations
+MaxTree, # the maximum acceptable park tree cover
+MinTree; # the minimum acceptable park tree cover
+
+# Import budget parameter --> (b)
+table tabBudget IN "tableproxy" "odbc" (DataFileInput) "BudgetParam": [],
+Budget; # budget
+
+# Import parameter of maximum allowable distance from a location to a park --> (m)
+table tabMaxAllowDist IN "tableproxy" "odbc" (DataFileInput) "MaxAllowDist": [],
+MaxAllowDist; # maximum allowable distance
+
+# Import count of residents of a demographic in a location --> (t[l,r])
+table tabCountLRdem IN "tableproxy" "odbc" (DataFileInput) "CountLRdem": # table of counts LR for demographic classifications
+[l ~ L], {r in R} <LRcount[l,r] ~ (r)>;
+
+# Import distance from location to park using pedestrian and bike paths network --> (d[k,l])
+table tabPedBikeDist IN "tableproxy" "odbc" (DataFileInput) "PedBikeDistKL": # table distances to park from resident location using pedestrian and bicycle paths
+[k ~ K], {l in L} <Distance[k,l] ~ (l)>;
+
+# Import strategic demographic target/priority weight parameter --> (q[r])
+table tabDemParams IN "tableproxy" "odbc" (DataFileInput) "DemParams": [R], # table of demographic parameters
+DemWeight;
+
+# Import park parameters
+table tabParkParams IN "tableproxy" "odbc" (DataFileInput) "ParkParams": [K], # table of park-specific parameters
+ParkFee, # park fee
+ParkExists, # 0/1 park does not/does already exists
+ParkCap, # park capacity in terms of number of people that the space can accommodate
+HeatPlus, # exogenous heat excess deviation parameter
+HeatMinus, # exogenous heat deficit deviation parameter
+TreePlus, # exogenous tree cover excess parameter
+TreeMinus; # exogenous tree cover deficit deviation parameter
+
+# Upload Data
+
+read table tabSetParks; # set of parks
+read table tabSetLocations; # set of resident locations
+read table tabSetDemographic; # set of demographics
+
+read table tabDistanceParams; # distance goodness bigM, normalization, and priority weight
+read table tabCapacityParams; # capacity goodness bigM, normalization, and priority weight
+read table tabHeatParams; # heat goodness bigM, normalization, priority weight, and acceptable ranges
+read table tabTreeParams; # tree cover goodness bigM, normalization, priority weight, and acceptable ranges
+
+read table tabBudget; # budget
+
+read table tabMaxAllowDist; # maximum allowable distance from residents to their primary parks
+read table tabPedBikeDist;
+ 
+read table tabParkParams; # park fee, existance identifier, capacity, heat (actual and deviations), and tree cover (actual and deviations)
+
+read table tabCountLRdem; # count of demographics in each resident location
+read table tabDemParams; # demographic weight of priority/strategic target
+
