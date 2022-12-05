@@ -1,7 +1,7 @@
 # Park Equity Modeling
 # File: ParkEquityRunCode.run
 # Purpose: To run all code (data import, model solution generation, and solution export)
-# Anisa Young, Emily Tucker, Mariela Fernandez, Robert Brookover, Brandon Harris, David White
+# Anisa Young, Emily Tucker, Mariela Fernandez, David White, Robert Brookover, Brandon Harris
 
 # RESET
 reset;

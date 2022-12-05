@@ -1,7 +1,7 @@
 # Park Equity Modeling
 # File: ParkEquityImportInputs.run
 # Purpose: To import data inputs from Excel into AMPL
-# Anisa Young, Emily Tucker, Mariela Fernandez, Robert Brookover, Brandon Harris, David White
+# Anisa Young, Emily Tucker, Mariela Fernandez, David White, Robert Brookover, Brandon Harris
 
 # File Name
 # Save the Excel input file as a parameter in AMPL.
@@ -96,9 +96,8 @@ read table tabBudget; # budget
 
 read table tabMaxAllowDist; # maximum allowable distance from residents to their primary parks
 read table tabPedBikeDist;
- 
+
 read table tabParkParams; # park fee, existance identifier, capacity, heat (actual and deviations), and tree cover (actual and deviations)
 
 read table tabCountLRdem; # count of demographics in each resident location
 read table tabDemParams; # demographic weight of priority/strategic target
-

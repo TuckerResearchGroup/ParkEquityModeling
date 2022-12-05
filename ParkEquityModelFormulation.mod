@@ -1,7 +1,7 @@
 # Park Equity Modeling
 # File: ParkEquityExportSolutions.run
 # Purpose: To export solutions from AMPL into Excel
-# Anisa Young, Emily Tucker, Mariela Fernandez, Robert Brookover, Brandon Harris, David White
+# Anisa Young, Emily Tucker, Mariela Fernandez, David White, Robert Brookover, Brandon Harris
 
 # ------------------------------------------------------------------------------------------------
 
@@ -16,10 +16,10 @@ set R; # set of all demographics --> r
 # PARAMETERS
 
 # Normalization Parameters (n in formulation)
-param DistNorm; # normalization for distance deviation 
-param CapNorm;  # normalization for capacity deviation 
-param HeatNorm; # normalization for heat deviation 
-param TreeNorm; # normalization for tree cover deviation 
+param DistNorm; # normalization for distance deviation
+param CapNorm;  # normalization for capacity deviation
+param HeatNorm; # normalization for heat deviation
+param TreeNorm; # normalization for tree cover deviation
 
 # Weight Parameters (w in formulation)
 param DistWeight; # importance weight of added distance
@@ -85,7 +85,7 @@ var NoCapSlack {k in K} binary >= 0; # 1 if do not need slack variable for capac
 # Linearization DVs (pi in formulation)
 var LinActDist {l in L} >= 0; # DV defines the linearization of actual distance of location l in L to its primary park
 var LinActCap {k in K} >= 0; # DV defines the linearization of actual capacity within park k in K
-var LinCapPlusKL {k in K, l in L} >= 0; # DV defines the linearization of capacity of location l in L at park k in K 
+var LinCapPlusKL {k in K, l in L} >= 0; # DV defines the linearization of capacity of location l in L at park k in K
 
 # DV defines the total cost of park purchasing
 var TotalParkFee >= 0;
@@ -135,7 +135,7 @@ s.t. BudgetLimit: sum {k in K} ParkFee[k] * y[k] <= Budget; # the monetary cost 
 
 # Distance Constraints
 s.t. AllowedDistance {l in L}: (sum {k in K} Distance[k,l] * x[k,l]) - DistPlus[l] <= MaxAllowDist; # patrons within the maximum allowable distance from their primary park (constraint 8)
-s.t. MinDistSlack {l in L}: DistPlus[l] - (sum {k in K} Distance[k,l] * x[k,l]) + MaxAllowDist + LinActDist[l] - (NoDistSlack[l] * MaxAllowDist) <= 0; # sets the minimum allowable distance slack variable value (constraint 26) 
+s.t. MinDistSlack {l in L}: DistPlus[l] - (sum {k in K} Distance[k,l] * x[k,l]) + MaxAllowDist + LinActDist[l] - (NoDistSlack[l] * MaxAllowDist) <= 0; # sets the minimum allowable distance slack variable value (constraint 26)
 s.t. SetLinActDist1 {l in L}: LinActDist[l] <= ActDistBigM * NoDistSlack[l]; # linearization constraint (constraint 27)
 s.t. SetLinActDist2 {l in L}: LinActDist[l] <= (sum {k in K} Distance[k,l] * x[k,l]); # linearization constraint constraint 28)
 s.t. SetLinActDist3 {l in L}: LinActDist[l] >= (sum {k in K} Distance[k,l] * x[k,l]) - (ActDistBigM * (1 - NoDistSlack[l])); # linearization constraint (constraint 29)
@@ -156,7 +156,7 @@ s.t. SetLinCapPlusKL3 {k in K, l in L}: LinCapPlusKL[k,l] >= CapPlus[k] - (CapDe
 s.t. SetLinCapPlusKL4 {k in K, l in L}: LinCapPlusKL[k,l] >= 0; # linearization constraint (constraint 25)
 
 # WEIGHTED AND NORMALIZED DEVIATION BY POPULATION * * * * * * * * * * *
-				
+
 # Weighted and Normalized Demographic Deviations (together equate constraint 21)
 s.t. SetDistDeviationR {r in R}: DistDeviationR[r] = DistNorm * DistWeight * sum {l in L} DemWeight[r] * LRcount[l,r] * DistPlus[l]; # demographic distance deviation calculation
 s.t. SetCapDeviationR {r in R}: CapDeviationR[r] = CapNorm * CapWeight * sum {k in K, l in L} DemWeight[r] * LRcount[l,r] * LinCapPlusKL[k,l]; # demographic capacity deviation (overcrowding) calculation
@@ -166,11 +166,11 @@ s.t. SetTreePDeviationR {r in R}: TreePDeviationR[r] = TreeNorm * TreePlusWeight
 s.t. SetTreeMDeviationR {r in R}: TreeMDeviationR[r] = TreeNorm * TreeMinusWeight * sum {k in K, l in L} DemWeight[r] * LRcount[l,r] * TreeMinus[k] * x[k,l]; # demographic tree cover deficit deviation calculation
 s.t. SetTotalDeviationR {r in R}: AllDeviationsR[r] = DistDeviationR[r] + CapDeviationR[r] + HeatPDeviationR[r] + HeatMDeviationR[r] + TreePDeviationR[r] + TreeMDeviationR[r]; # total demographic deviations
 
-# Select Min and Max Deviations	(constraint 3)			
+# Select Min and Max Deviations	(constraint 3)
 s.t. SetMaxTotalDevR {r in R}: MaxTotalDevR >= AllDeviationsR[r]; # find the maximum deviation of all demographic deviations
 
 # * * * * * * * * * * * * * * * * SET STATUS DVs * * * * * * * * * * * * * * * *
-	
+
 # Set Cost Variable
 s.t. SetTotalParkFee: TotalParkFee = sum {k in K} ParkFee[k] * y[k]; # calculates the total park purchasing fee
 

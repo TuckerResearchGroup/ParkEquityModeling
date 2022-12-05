@@ -1,7 +1,7 @@
 # Park Equity Modeling
 # File: ParkEquityExportSolutions.run
 # Purpose: To export solutions from AMPL into Excel
-# Anisa Young, Emily Tucker, Mariela Fernandez, Robert Brookover, Brandon Harris, David White
+# Anisa Young, Emily Tucker, Mariela Fernandez, David White, Robert Brookover, Brandon Harris
 
 # File Name
 param DataFileExport symbolic := "ParkEquitySolutionRecord.xlsx";
